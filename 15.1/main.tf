@@ -78,7 +78,7 @@ resource "yandex_compute_instance" "test-vm-pub" {
     nat       = true
   }
   metadata = {
-    key_ssh   = "${var.user}:${file("~/.ssh/id_rsa.pub")}"
+    ssh-keys   = "${var.user}:${file("~/.ssh/id_rsa.pub")}"
     # user-data = data.template_file.cloud_init.rendered
   }
 #   provisioner "file" {
@@ -140,7 +140,7 @@ resource "yandex_compute_instance" "test-vm-priv" {
     subnet_id = yandex_vpc_subnet.yc-subnet-b.id
   }
   metadata = {
-    key_ssh   = "${var.user}:${file("~/.ssh/id_rsa.pub")}"
+    ssh-keys  = "${var.user}:${file("~/.ssh/id_rsa.pub")}"
     # user-data = data.template_file.cloud_init.rendered
   }
 }
