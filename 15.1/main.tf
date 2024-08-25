@@ -1,27 +1,7 @@
-# terraform {
-#   required_providers {
-#     yandex = {
-#       source = "yandex-cloud/yandex"
-#     }
-#   }
-#   required_version = ">= 0.13"
-# }
-
-# resource "tls_private_key" "ssh-key" {
-#   algorithm = "RSA"
-# #   rsa_bits  = 4096
-# }
-# resource "local_sensitive_file" "id_rsa" {
-#   filename        = "ssh_key"
-#   file_permission = "600"
-#   content         = tls_private_key.ssh-key.private_key_pem
-# }
-
 data "template_file" "cloud_init" {
   template = file("cloud_init_config.tpl")
   vars = {
     user    = var.user
-    # ssh_key = tls_private_key.ssh-key.public_key_openssh
   }
 }
 
@@ -79,29 +59,7 @@ resource "yandex_compute_instance" "test-vm-pub" {
   }
   metadata = {
     ssh-keys   = "${var.user}:${file("~/.ssh/id_rsa.pub")}"
-    # user-data = data.template_file.cloud_init.rendered
   }
-#   provisioner "file" {
-#     content     = tls_private_key.ssh-key.private_key_pem
-#     destination = pathexpand(var.private_key_path)
-#     connection {
-#       type        = "ssh"
-#       host        = self.network_interface.0.nat_ip_address
-#       user        = var.user
-#       private_key = tls_private_key.ssh-key.private_key_openssh
-#     }
-#   }
-#   provisioner "remote-exec" {
-#     inline = [
-#       "chmod 600 /home/ubuntu/.ssh/id_rsa",
-#     ]
-#     connection {
-#       type        = "ssh"
-#       host        = self.network_interface.0.nat_ip_address
-#       user        = var.user
-#       private_key = tls_private_key.ssh-key.private_key_openssh
-#     }
-#   }
 }
 
 resource "yandex_vpc_subnet" "yc-subnet-b" {
@@ -141,6 +99,5 @@ resource "yandex_compute_instance" "test-vm-priv" {
   }
   metadata = {
     ssh-keys  = "${var.user}:${file("~/.ssh/id_rsa.pub")}"
-    # user-data = data.template_file.cloud_init.rendered
   }
 }
